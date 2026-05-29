@@ -1,0 +1,100 @@
+---
+// The headline section on the homepage.
+// All copy lives here as props so you can tweak it without touching layout.
+export interface Props {
+  name: string;
+  tagline: string;
+  intro: string;
+  status?: string;
+}
+
+const {
+  name,
+  tagline,
+  intro,
+  status = "currently building & shipping",
+} = Astro.props;
+---
+
+<section class="hero">
+  <div class="container">
+    <p class="status mono">
+      <span class="dot" aria-hidden="true"></span>
+      {status}
+    </p>
+    <h1>
+      <span id="typed-tagline">{tagline}</span><span class="cursor" aria-hidden="true"></span>
+    </h1>
+    <p class="intro">
+      {intro}
+    </p>
+    <div class="cta">
+      <a class="button primary" href="/projects">see what i'm building →</a>
+      <a class="button" href="/about">about me</a>
+    </div>
+
+    <!-- Subtle terminal flourish -->
+    <pre class="ascii" aria-hidden="true"><span>{`> hi, i'm ${name}. this is my workshop.`}</span></pre>
+  </div>
+</section>
+
+<!--
+  Type-on tagline. is:inline so it runs synchronously at parse time and
+  clears the text before first paint (no flash of the full string).
+  Reduced motion → leave the tagline fully rendered, no animation.
+-->
+<script is:inline>
+  (function () {
+    var el = document.getElementById("typed-tagline");
+    if (!el) return;
+    var text = el.textContent;
+    var reduce =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) return; // text already in place
+    el.textContent = "";
+    var i = 0;
+    (function tick() {
+      el.textContent = text.slice(0, i);
+      if (i++ < text.length) setTimeout(tick, 50);
+    })();
+  })();
+</script>
+
+<style>
+  .hero {
+    padding-block: var(--space-24) var(--space-16);
+    position: relative;
+  }
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--ink-dim);
+    margin-bottom: var(--space-6);
+  }
+  h1 {
+    max-width: 14ch;
+    margin-bottom: var(--space-6);
+  }
+  .intro {
+    color: var(--ink-dim);
+    font-size: 1.15rem;
+    max-width: 52ch;
+    margin-bottom: var(--space-8);
+  }
+  .cta {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .ascii {
+    margin-top: var(--space-16);
+    color: var(--ink-mute);
+    font-size: 0.85rem;
+    border: 0;
+    background: transparent;
+    padding: 0;
+  }
+</style>

@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ProjectCard from "../../components/ProjectCard.astro";
+import { getCollection } from "astro:content";
+
+const projects = (await getCollection("projects", ({ data }) => !data.draft))
+  .sort((a, b) => {
+    if (a.data.order !== b.data.order) return a.data.order - b.data.order;
+    return b.data.year - a.data.year;
+  });
+---
+
+<BaseLayout title="projects — Jason White" description="Everything I've built — finished, in progress, and otherwise.">
+  <section class="container section">
+    <header class="head">
+      <p class="eyebrow">/projects</p>
+      <h1>things i've built.</h1>
+      <p class="lede prose">
+        Some are live. Some are still cooking. I keep them all here so the trail of
+        what I'm learning stays visible.
+      </p>
+    </header>
+
+    <div class="grid cols-2">
+      {projects.map((p) => <ProjectCard project={p} />)}
+    </div>
+
+    {projects.length === 0 && (
+      <div class="empty mono">
+        <p>// no projects yet. check back soon.</p>
+      </div>
+    )}
+  </section>
+</BaseLayout>
+
+<style>
+  .head { margin-bottom: var(--space-12); }
+  .head h1 { margin-block: 0.5rem; }
+  .lede { font-size: 1.1rem; color: var(--ink-dim); max-width: 56ch; }
+
+  .empty {
+    padding: var(--space-12);
+    border: 1px dashed var(--bg-line);
+    border-radius: 8px;
+    color: var(--ink-mute);
+    text-align: center;
+  }
+</style>

@@ -1,0 +1,179 @@
+---
+// Ambient, purely-decorative background effects:
+//   a) a slow red scanline sweep (14s sweep, 20s pause, repeat)
+//   b) an occasional UFO flyover (random 45–90s)
+//   c) an occasional retro sports-car drive-by (random 60–120s)
+// All are pointer-events:none and sit above content but below modal-y UI.
+// Everything is disabled under prefers-reduced-motion (CSS hides the wrapper,
+// and the JS bails before scheduling any timers).
+---
+
+<div class="ambient" aria-hidden="true">
+  <div class="scanline"></div>
+
+  <div class="ufo" id="ambient-ufo">
+    <div class="ufo-bob">
+      <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="22" rx="40" ry="6" fill="currentColor"/>
+        <ellipse cx="50" cy="16" rx="18" ry="10" fill="currentColor" opacity="0.7"/>
+        <circle cx="36" cy="22" r="2" fill="#0a0a0b"/>
+        <circle cx="50" cy="22" r="2" fill="#0a0a0b"/>
+        <circle cx="64" cy="22" r="2" fill="#0a0a0b"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="car" id="ambient-car">
+    <span class="trail t1"></span>
+    <span class="trail t2"></span>
+    <span class="trail t3"></span>
+    <svg viewBox="0 0 140 40" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="10,30 30,15 90,12 120,18 130,30" fill="currentColor"/>
+      <circle cx="35" cy="32" r="5" fill="#0a0a0b" stroke="currentColor" stroke-width="2"/>
+      <circle cx="105" cy="32" r="5" fill="#0a0a0b" stroke="currentColor" stroke-width="2"/>
+      <polygon points="40,18 80,14 88,18" fill="#0a0a0b" opacity="0.6"/>
+    </svg>
+  </div>
+</div>
+
+<style>
+  /* Wrapper doesn't create a box; each effect positions itself. */
+  .ambient { display: contents; }
+
+  /* a) Scanline sweep -------------------------------------------------- */
+  .scanline {
+    position: fixed;
+    left: 0;
+    top: -10px;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 80, 80, 0.45),
+      transparent
+    );
+    mix-blend-mode: screen;
+    pointer-events: none;
+    z-index: 50;
+    /* 14s sweep + 20s pause = 34s cycle (14/34 ≈ 41.18%). */
+    animation: scan 34s linear infinite;
+  }
+  @keyframes scan {
+    0%      { top: -10px; }
+    41.18%  { top: 110vh; }
+    100%    { top: 110vh; }
+  }
+
+  /* b) UFO flyover ----------------------------------------------------- */
+  .ufo {
+    position: fixed;
+    top: 18vh;            /* top third of viewport */
+    left: 0;
+    width: 8em;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateX(-12em);
+    pointer-events: none;
+    z-index: 50;
+  }
+  .ufo.flying { animation: ufo-fly 10s linear forwards; }
+  @keyframes ufo-fly {
+    0%   { transform: translateX(-12em); opacity: 0; }
+    6%   { opacity: 1; }
+    94%  { opacity: 1; }
+    100% { transform: translateX(110vw); opacity: 0; }
+  }
+  /* Gentle ~12px sine bob while in flight (separate element = no transform clash). */
+  .ufo.flying .ufo-bob { animation: ufo-bob 2.4s ease-in-out infinite; }
+  @keyframes ufo-bob {
+    0%, 100% { transform: translateY(-6px); }
+    50%      { transform: translateY(6px); }
+  }
+
+  /* c) Sports-car drive-by --------------------------------------------- */
+  .car {
+    position: fixed;
+    bottom: 16px;
+    left: 0;
+    width: 7em;
+    color: var(--accent);
+    opacity: 0;
+    transform: translateX(100vw);
+    pointer-events: none;
+    z-index: 50;
+  }
+  .car svg { width: 100%; height: auto; }
+  .car.driving { animation: car-drive 7s linear forwards; }
+  @keyframes car-drive {
+    0%   { transform: translateX(100vw); opacity: 0; }
+    6%   { opacity: 1; }
+    94%  { opacity: 1; }
+    100% { transform: translateX(-9em); opacity: 0; }
+  }
+  /* Fire trail — 3 fading red rectangles behind (to the right, since it drives left). */
+  .car .trail {
+    position: absolute;
+    top: 62%;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--accent);
+  }
+  .car .t1 { right: -1.2em; width: 1em;   opacity: 0.80; }
+  .car .t2 { right: -2.8em; width: 1.4em; opacity: 0.50; }
+  .car .t3 { right: -4.8em; width: 1.8em; opacity: 0.22; }
+
+  /* d) Respect reduced motion — kill everything. */
+  @media (prefers-reduced-motion: reduce) {
+    .ambient { display: none; }
+  }
+</style>
+
+<script is:inline>
+  (function () {
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return; // no timers, no motion
+    }
+
+    var rand = function (min, max) {
+      return min + Math.random() * (max - min);
+    };
+
+    // UFO: random 45–90s between flights.
+    var ufo = document.getElementById("ambient-ufo");
+    function flyUfo() {
+      if (!ufo) return;
+      ufo.classList.remove("flying");
+      void ufo.offsetWidth; // reflow → restart animation
+      ufo.classList.add("flying");
+    }
+    function scheduleUfo() {
+      setTimeout(function () {
+        flyUfo();
+        scheduleUfo();
+      }, rand(45000, 90000));
+    }
+
+    // Car: random 60–120s, with an initial offset so it doesn't sync with the UFO.
+    var car = document.getElementById("ambient-car");
+    function driveCar() {
+      if (!car) return;
+      car.classList.remove("driving");
+      void car.offsetWidth;
+      car.classList.add("driving");
+    }
+    function scheduleCar() {
+      setTimeout(function () {
+        driveCar();
+        scheduleCar();
+      }, rand(60000, 120000));
+    }
+
+    scheduleUfo();
+    // Offset the car's first run so the two effects rarely overlap.
+    setTimeout(scheduleCar, rand(20000, 35000));
+  })();
+</script>

@@ -1,0 +1,52 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container foot">
+    <p class="mono small">
+      <span class="prompt">$</span> built by hand. last updated {year}.
+    </p>
+    <ul class="socials" aria-label="Social links">
+      <li><a href="mailto:jjfluxbuilds@gmail.com">email</a></li>
+      <li><a href="https://github.com/jjflux" rel="me noopener" target="_blank">github</a></li>
+      <li><a href="https://x.com/jsn_wht" rel="me noopener" target="_blank">x</a></li>
+      <li><a href="https://instagram.com/jsn_wht" rel="me noopener" target="_blank">instagram</a></li>
+      <li><a href="https://tiktok.com/@jjflux.builds" rel="me noopener" target="_blank">tiktok</a></li>
+    </ul>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-24);
+    border-top: 1px solid var(--bg-line);
+    padding-block: var(--space-8);
+  }
+
+  .foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .small { font-size: 0.8125rem; color: var(--ink-mute); margin: 0; }
+  .prompt { color: var(--accent); }
+
+  .socials {
+    list-style: none;
+    display: flex;
+    gap: 1.25rem;
+    padding: 0;
+    margin: 0;
+  }
+  .socials a {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    color: var(--ink-dim);
+    border-bottom: 0;
+  }
+  .socials a:hover { color: var(--accent); }
+</style>

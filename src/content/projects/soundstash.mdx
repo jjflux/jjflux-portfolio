@@ -1,0 +1,70 @@
+---
+title: "SoundStash"
+summary: "Paste a TikTok link. Save the audio. A personal sound library built for me, my family, and my friends."
+status: "live"
+year: 2026
+role: "Solo builder"
+tech:
+  - "Next.js"
+  - "yt-dlp"
+coverImage: "/projects/soundstash/cover.png"
+links:
+  live: "https://www.soundstash.cloud/"
+featured: true
+order: 1
+draft: false
+---
+
+## the problem
+
+My family, my friends, and I were always swapping TikToks back and forth
+for the audio. Someone would find a sound, send it to the group, we'd
+all want to save it — and TikTok itself makes that genuinely painful.
+The native save flow isn't built for sound collectors. We needed
+something tiny and personal: paste a link, get the audio, keep it.
+
+## what i built
+
+SoundStash is a quiet little audio library. You paste a TikTok URL,
+the app pulls the sound out, and it lives in your stash. You can
+organize sounds into playlists, scroll your recently added, and just
+hit play. That's it. No feed, no algorithm, no posting back. Just
+sounds you want to keep.
+
+The empty state reads:
+
+> No sounds yet. Paste a link above to save one.
+
+Which honestly tells you everything about how this thing works.
+
+## how it works
+
+The frontend is Next.js. The link goes to a small backend that runs
+[`yt-dlp`](https://github.com/yt-dlp/yt-dlp) to pull the audio. Once
+it's down, the sound gets stored and surfaced in the UI for playback,
+tagging, and playlists.
+
+Most of the work was wiring those pieces together cleanly — paste box,
+extract pipeline, playback, list views, empty states. Standard CRUD
+energy, with a couple of fun edges.
+
+## tech & tradeoffs
+
+- **Frontend:** Next.js
+- **Audio extraction:** yt-dlp on the backend
+
+## what i learned
+
+Honestly? The build itself was pretty straightforward. The hard part
+was what happens *after* the build. If you closed the app and came
+back later, sounds in your stash would break — stale refs, expired
+URLs, the usual. The fix was an automatic refresh-on-load that
+quietly re-validates everything before you see it. The user doesn't
+have to know it's happening. From their seat, it just works.
+
+That was the real lesson: a tool you use every day has to feel like
+nothing ever went wrong, even when something definitely did.
+
+## try it
+
+[→ visit soundstash](https://www.soundstash.cloud/)

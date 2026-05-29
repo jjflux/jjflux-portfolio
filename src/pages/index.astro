@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { getCollection } from "astro:content";
+
+// Grab non-draft projects, sorted by `order` then `year`.
+const projects = (await getCollection("projects", ({ data }) => !data.draft))
+  .sort((a, b) => {
+    if (a.data.order !== b.data.order) return a.data.order - b.data.order;
+    return b.data.year - a.data.year;
+  });
+
+const featured = projects.filter((p) => p.data.featured);
+const recent = (featured.length ? featured : projects).slice(0, 4);
+---
+
+<BaseLayout>
+  <Hero
+    name="jjflux"
+    tagline="building whatever comes to mind."
+    intro="I'm Jason (jjflux). this is my site where i put stuff i build."
+    status="currently building"
+  />
+
+  <!-- Featured projects strip -->
+  <section class="section" id="work">
+    <div class="container">
+      <header class="section-head">
+        <p class="eyebrow">recent work</p>
+        <h2>things i've built</h2>
+        <a href="/projects" class="mono see-all">all projects →</a>
+      </header>
+
+      <div class="grid cols-2">
+        {recent.map((p) => <ProjectCard project={p} />)}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: var(--space-8);
+  }
+  .section-head .eyebrow { display: block; flex-basis: 100%; }
+  .section-head h2 { margin-right: auto; }
+
+  .see-all {
+    font-size: 0.875rem;
+    color: var(--ink-dim);
+    border-bottom: 0;
+  }
+  .see-all:hover { color: var(--accent); }
+</style>

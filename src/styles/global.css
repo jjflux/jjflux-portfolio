@@ -1,0 +1,281 @@
+/* ------------------------------------------------------------
+   DESIGN SYSTEM — dark, technical, with a hint of playful.
+   Edit colors / fonts here and the whole site updates.
+   ------------------------------------------------------------ */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+:root {
+  /* --- Palette ---------------------------------------------- */
+  --bg:        #0a0a0b;        /* page background */
+  --bg-elev:   #131317;        /* cards / elevated surfaces */
+  --bg-line:   #1f1f24;        /* dividers, faint borders */
+
+  --ink:       #ececee;        /* primary text */
+  --ink-dim:   #a4a4ad;        /* secondary text */
+  --ink-mute:  #6a6a73;        /* tertiary text / captions */
+
+  /* The "technical" accent — a hot signal red. */
+  --accent:        #ff5050;
+  --accent-glow:   rgba(255, 80, 80, 0.20);
+  --accent-faint:  rgba(255, 80, 80, 0.10);
+
+  /* The "playful" accent — a warm peach. Used sparingly. */
+  --peach:     #ff9c6e;
+
+  /* --- Typography ------------------------------------------- */
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  /* --- Spacing scale --------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 6rem;
+
+  /* --- Layout ---------------------------------------------- */
+  --content-w: 1080px;
+  --prose-w:   680px;
+
+  /* --- Motion ---------------------------------------------- */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ------------------------------------------------------------
+   RESET / BASE
+   ------------------------------------------------------------ */
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+html {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  /* Subtle radial vignette adds depth without being heavy */
+  background:
+    radial-gradient(1200px 600px at 50% -200px, rgba(255, 80, 80, 0.06), transparent 60%),
+    var(--bg);
+}
+
+img, svg { max-width: 100%; display: block; }
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 150ms var(--ease), border-color 150ms var(--ease);
+}
+a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ------------------------------------------------------------
+   TYPOGRAPHY
+   ------------------------------------------------------------ */
+
+h1, h2, h3, h4 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin: 0;
+}
+
+h1 { font-size: clamp(2.25rem, 5vw, 3.75rem); }
+h2 { font-size: clamp(1.75rem, 3.2vw, 2.25rem); }
+h3 { font-size: 1.25rem; }
+
+p { margin: 0 0 1em; }
+
+code, pre, .mono {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+code {
+  background: var(--bg-elev);
+  border: 1px solid var(--bg-line);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+}
+
+pre {
+  background: var(--bg-elev);
+  border: 1px solid var(--bg-line);
+  border-radius: 8px;
+  padding: var(--space-4);
+  overflow-x: auto;
+}
+pre code { background: transparent; border: 0; padding: 0; }
+
+/* ------------------------------------------------------------
+   LAYOUT
+   ------------------------------------------------------------ */
+
+.container {
+  width: 100%;
+  max-width: var(--content-w);
+  margin-inline: auto;
+  padding-inline: var(--space-6);
+}
+
+.section {
+  padding-block: var(--space-24);
+}
+@media (max-width: 640px) {
+  .section { padding-block: var(--space-16); }
+}
+
+.prose {
+  max-width: var(--prose-w);
+}
+.prose p, .prose li { color: var(--ink-dim); font-size: 1.05rem; }
+.prose strong { color: var(--ink); }
+.prose a { color: var(--accent); border-bottom-color: var(--accent-faint); }
+.prose a:hover { border-bottom-color: var(--accent); }
+.prose h2 { margin-top: 2em; margin-bottom: 0.5em; }
+.prose h3 { margin-top: 1.5em; margin-bottom: 0.4em; }
+.prose img {
+  border: 1px solid var(--bg-line);
+  border-radius: 8px;
+  margin-block: var(--space-6);
+}
+
+/* ------------------------------------------------------------
+   COMPONENTS — utility classes used across pages
+   ------------------------------------------------------------ */
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+  color: var(--accent);
+}
+
+.eyebrow::before { content: "// "; opacity: 0.65; }
+
+.tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--bg-line);
+  border-radius: 999px;
+  color: var(--ink-dim);
+  background: var(--bg-elev);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.1rem;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  border: 1px solid var(--bg-line);
+  background: var(--bg-elev);
+  color: var(--ink);
+  transition: all 200ms var(--ease);
+}
+.button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-faint);
+  transform: translateY(-1px);
+}
+.button.primary {
+  background: var(--accent);
+  color: #0a0a0b;
+  border-color: var(--accent);
+}
+.button.primary:hover {
+  color: #0a0a0b;
+  background: #ff7a7a;
+  box-shadow: 0 0 0 6px var(--accent-glow);
+}
+
+/* Status dot — used for "now building" state indicators */
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 0 var(--accent-glow);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+  50%      { box-shadow: 0 0 0 8px transparent; }
+}
+
+/* Blinking cursor — the playful touch */
+.cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  vertical-align: -0.12em;
+  background: var(--accent);
+  margin-left: 2px;
+  animation: blink 1.05s steps(1, end) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* Card */
+.card {
+  display: block;
+  padding: var(--space-6);
+  border: 1px solid var(--bg-line);
+  border-radius: 10px;
+  background: var(--bg-elev);
+  transition: all 250ms var(--ease);
+}
+.card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--accent-faint);
+}
+
+/* Project grid */
+.grid {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 640px) {
+  .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+}
+
+/* Hidden but accessible to screen readers */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* Selection */
+::selection { background: var(--accent); color: #0a0a0b; }
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001s !important;
+    transition-duration: 0.001s !important;
+  }
+}

@@ -1,0 +1,136 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import type { CollectionEntry } from "astro:content";
+
+export interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+const { data } = project;
+
+const statusLabel = {
+  live: "live",
+  "in-progress": "in progress",
+  archived: "archived",
+  concept: "concept",
+}[data.status];
+---
+
+<BaseLayout
+  title={`${data.title} — Jason White`}
+  description={data.summary}
+  ogImage={data.coverImage ?? "/og-default.png"}
+>
+  <article class="container project">
+    <a class="back mono" href="/projects">← all projects</a>
+
+    <header class="head">
+      <p class="eyebrow">project // {data.year}</p>
+      <h1>{data.title}</h1>
+      <p class="lede">{data.summary}</p>
+
+      <div class="meta">
+        <span class={`status status-${data.status} mono`}>
+          <span class="dot" aria-hidden="true"></span> {statusLabel}
+        </span>
+        {data.role && <span class="mono small">role &nbsp;·&nbsp; {data.role}</span>}
+      </div>
+
+      {data.tech?.length > 0 && (
+        <ul class="tags" aria-label="Tech stack">
+          {data.tech.map((t) => <li class="tag">{t}</li>)}
+        </ul>
+      )}
+
+      {data.links && (
+        <div class="links">
+          {data.links.live      && <a class="button primary" href={data.links.live} target="_blank" rel="noopener">visit site →</a>}
+          {data.links.appStore  && <a class="button" href={data.links.appStore} target="_blank" rel="noopener">app store</a>}
+          {data.links.playStore && <a class="button" href={data.links.playStore} target="_blank" rel="noopener">play store</a>}
+          {data.links.github    && <a class="button" href={data.links.github} target="_blank" rel="noopener">github</a>}
+          {data.links.demo      && <a class="button" href={data.links.demo} target="_blank" rel="noopener">demo</a>}
+        </div>
+      )}
+    </header>
+
+    {data.coverImage && (
+      <figure class="cover">
+        <img src={data.coverImage} alt={`${data.title} cover`} />
+      </figure>
+    )}
+
+    <div class="prose body">
+      <slot />
+    </div>
+
+    <nav class="next-prev">
+      <a href="/projects" class="button">← back to projects</a>
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  .project { padding-block: var(--space-12) var(--space-16); }
+
+  .back {
+    color: var(--ink-mute);
+    font-size: 0.8125rem;
+    border-bottom: 0;
+  }
+  .back:hover { color: var(--accent); }
+
+  .head { margin-block: var(--space-8) var(--space-12); }
+
+  h1 { margin-block: 0.5rem; }
+
+  .lede {
+    font-size: 1.15rem;
+    color: var(--ink-dim);
+    max-width: 56ch;
+    margin-block: var(--space-4) var(--space-6);
+  }
+
+  .meta {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    color: var(--ink-mute);
+    font-size: 0.8125rem;
+    margin-bottom: var(--space-4);
+  }
+  .status { display: inline-flex; align-items: center; gap: 0.4rem; }
+  .status .dot { width: 6px; height: 6px; }
+  .status-live .dot        { background: var(--accent); }
+  .status-in-progress .dot { background: var(--peach); }
+  .status-archived .dot    { background: var(--ink-mute); animation: none; }
+  .status-concept .dot     { background: var(--ink-dim); animation: none; }
+
+  .tags {
+    list-style: none;
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    padding: 0;
+    margin-bottom: var(--space-6);
+  }
+
+  .links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .cover {
+    margin: 0 0 var(--space-12);
+    border: 1px solid var(--bg-line);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--bg-elev);
+  }
+  .cover img { width: 100%; display: block; }
+
+  .body { max-width: var(--prose-w); }
+
+  .next-prev { margin-top: var(--space-12); }
+</style>

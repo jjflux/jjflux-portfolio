@@ -1,0 +1,102 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+export interface Props {
+  project: CollectionEntry<"projects">;
+}
+
+const { project } = Astro.props;
+const { data, slug } = project;
+
+const statusLabel = {
+  live: "live",
+  "in-progress": "in progress",
+  archived: "archived",
+  concept: "concept",
+}[data.status];
+---
+
+<a class="card project-card" href={`/projects/${slug}`}>
+  <div class="meta mono">
+    <span class={`status status-${data.status}`}>
+      <span class="dot" aria-hidden="true"></span>
+      {statusLabel}
+    </span>
+    <span class="year">{data.year}</span>
+  </div>
+
+  <h3 class="title">{data.title}</h3>
+  <p class="summary">{data.summary}</p>
+
+  {data.tech?.length > 0 && (
+    <ul class="tags" aria-label="Tech stack">
+      {data.tech.slice(0, 5).map((t) => (
+        <li class="tag">{t}</li>
+      ))}
+    </ul>
+  )}
+</a>
+
+<style>
+  .project-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    color: var(--ink);
+    border-bottom: 0;
+  }
+  .project-card:hover { color: var(--ink); }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--ink-mute);
+    margin-bottom: 0.25rem;
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .status .dot { width: 6px; height: 6px; }
+  .status-live .dot       { background: var(--accent); }
+  .status-in-progress .dot { background: var(--peach); }
+  .status-archived .dot   { background: var(--ink-mute); animation: none; }
+  .status-concept .dot    { background: var(--ink-dim); animation: none; }
+
+  .title {
+    font-size: 1.25rem;
+    margin: 0;
+    transition: color 200ms var(--ease);
+  }
+  .project-card:hover .title {
+    color: var(--accent);
+    /* Brief chromatic aberration that settles to a faint residual. */
+    animation: title-glitch 100ms var(--ease) both;
+  }
+  @keyframes title-glitch {
+    0% {
+      text-shadow: -2px 0 rgba(255, 80, 80, 0.9), 2px 0 rgba(0, 255, 255, 0.9);
+    }
+    100% {
+      text-shadow: -0.5px 0 rgba(255, 80, 80, 0.35), 0.5px 0 rgba(0, 255, 255, 0.35);
+    }
+  }
+
+  .summary {
+    color: var(--ink-dim);
+    margin: 0;
+  }
+
+  .tags {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0;
+    margin: 0.25rem 0 0;
+  }
+</style>

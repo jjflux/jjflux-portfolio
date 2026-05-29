@@ -1,0 +1,71 @@
+---
+// Persistent top nav. Highlights the current page subtly.
+const pathname = Astro.url.pathname;
+const isActive = (path: string) =>
+  path === "/" ? pathname === "/" : pathname.startsWith(path);
+---
+
+<header class="site-header">
+  <div class="container nav">
+    <a href="/" class="brand mono" aria-label="Home">
+      <span class="brand-prompt">~/</span><span class="brand-name">jjflux</span><span class="brand-alt"> (jsn_wht)</span><span class="cursor" aria-hidden="true"></span>
+    </a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="/" class:list={[{ active: isActive("/") }]}>home</a></li>
+        <li><a href="/projects" class:list={[{ active: isActive("/projects") }]}>projects</a></li>
+        <li><a href="/about" class:list={[{ active: isActive("/about") }]}>about</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    backdrop-filter: blur(10px);
+    background: color-mix(in oklab, var(--bg) 80%, transparent);
+    border-bottom: 1px solid var(--bg-line);
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-block: 0.85rem;
+  }
+
+  .brand {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--ink);
+    border-bottom: 0;
+  }
+  .brand-prompt { color: var(--ink-mute); }
+  .brand-name   { color: var(--accent); }
+  .brand-alt    { color: var(--ink-mute); }
+  .brand:hover  { color: var(--ink); }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+  }
+  nav a {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    color: var(--ink-dim);
+    border-bottom: 0;
+  }
+  nav a:hover, nav a.active { color: var(--accent); }
+  nav a.active::before { content: "→ "; }
+
+  @media (max-width: 480px) {
+    nav ul { gap: 1rem; }
+    nav a  { font-size: 0.8rem; }
+  }
+</style>

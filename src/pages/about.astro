@@ -1,0 +1,115 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+// The 6 places to find me. Order = display order in the list.
+const socials = [
+  { label: "email",             handle: "jjfluxbuilds@gmail.com", href: "mailto:jjfluxbuilds@gmail.com",      external: false },
+  { label: "github",            handle: "@jjflux",                href: "https://github.com/jjflux",          external: true },
+  { label: "twitter",           handle: "@jsn_wht",               href: "https://x.com/jsn_wht",              external: true },
+  { label: "instagram",         handle: "@jsn_wht",               href: "https://instagram.com/jsn_wht",      external: true },
+  { label: "tiktok · builds",   handle: "@jjflux.builds",         href: "https://tiktok.com/@jjflux.builds",  external: true },
+  { label: "tiktok · personal", handle: "@jsn_wht",               href: "https://tiktok.com/@jsn_wht",        external: true },
+];
+---
+
+<BaseLayout title="about — jjflux" description="A quick intro and where to find me.">
+  <article class="container about">
+    <p class="eyebrow">about</p>
+
+    <h1>im jason aka jjflux aka jsn_wht</h1>
+
+    <div class="prose lede">
+      <p>
+        I just like creating things. If you have an idea for me to build, message me.
+        Or message me for whatever reason.
+      </p>
+    </div>
+
+    <section class="block">
+      <p class="eyebrow">find me</p>
+
+      <div class="social-list">
+        {socials.map((s) => (
+          <a
+            class="social-row"
+            href={s.href}
+            target={s.external ? "_blank" : undefined}
+            rel={s.external ? "noopener me" : undefined}
+          >
+            <span class="social-label mono">{s.label}</span>
+            <span class="social-handle">{s.handle}</span>
+            <span class="social-arrow mono" aria-hidden="true">→</span>
+          </a>
+        ))}
+      </div>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .about {
+    padding-block: var(--space-12) var(--space-16);
+    max-width: var(--prose-w);
+  }
+
+  .lede p { font-size: 1.15rem; }
+
+  .block { margin-top: var(--space-16); }
+  .block .eyebrow { display: block; margin-bottom: var(--space-6); }
+
+  /* Vertical social list — one row per social, full width, stacked on ALL
+     screen sizes. Single-column grid, no responsive columns ever. */
+  .social-list {
+    max-width: 720px;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .social-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    width: 100%;
+    min-height: 72px;
+    padding-block: 1.25rem;
+    border-top: 1px solid var(--bg-line);
+    border-bottom: 1px solid var(--bg-line);
+    margin-top: -1px; /* collapse adjacent borders */
+    color: var(--ink);
+    transition: background-color 200ms var(--ease);
+  }
+  .social-row:hover {
+    background: rgba(255, 80, 80, 0.05);
+  }
+
+  .social-label {
+    flex: none;
+    width: 180px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-mute);
+  }
+
+  .social-handle {
+    flex: 1;
+    font-size: 1.15rem;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+    transition: color 200ms var(--ease);
+  }
+  .social-row:hover .social-handle { color: var(--accent); }
+
+  .social-arrow {
+    flex: none;
+    color: var(--ink-mute);
+    transition: transform 200ms var(--ease), color 200ms var(--ease);
+  }
+  .social-row:hover .social-arrow {
+    transform: translateX(6px);
+    color: var(--accent);
+  }
+
+  @media (max-width: 480px) {
+    .social-label { width: 120px; }
+  }
+</style>
