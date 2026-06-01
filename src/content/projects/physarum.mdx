@@ -1,0 +1,76 @@
+---
+title: "Physarum — Slime Mold Simulator"
+summary: "60,000 autonomous agents leave chemical trails and steer toward them, self-organizing into living, glowing networks in real time."
+status: "live"
+year: 2026
+role: "Solo builder"
+tech:
+  - "Vanilla JavaScript"
+  - "HTML5 Canvas"
+  - "Agent-based sim"
+coverImage: "/projects/physarum/cover.png"
+links:
+  live: "/physarum/"
+featured: true
+order: 1
+draft: false
+---
+
+## what it is
+
+Physarum is a real slime mold. With no brain and no central plan, it
+solves mazes and rebuilds transit maps just by following its own
+chemical trails. This is that, in your browser: 60,000 tiny agents,
+each one dumb on its own, sensing and steering until — within a second
+or two — they self-organize into a living, branching network you can
+watch breathe and rewire itself in real time.
+
+## what it does
+
+It's not a video — every pixel is being simulated live, and the whole
+thing is yours to play with:
+
+- **A real-time control panel** — agent count, move speed, turn speed,
+  sensor distance and angle, trail decay, and deposit amount. Every
+  slider reshapes the network as you drag it.
+- **4 color palettes** — Ember, Bioluminescent, Mono, and Ultraviolet.
+- **4 behavior presets** — Veins, Web, Coral, and Galaxy, each a
+  genuinely different organism.
+- **Seeded randomization with shareable URLs** — every look has a seed,
+  so you can copy a link that reproduces exactly what's on screen.
+- **Bloom glow** — a subtle post-process so the bright veins bleed light.
+- **Click-to-paint attract / repel** — drag on the canvas to drop food
+  the agents stream toward, or carve channels they bend away from.
+- **PNG export** — save whatever you've grown as an image.
+
+Go ahead — drag a slider, paint a stroke, hit randomize:
+
+<iframe
+  src="/physarum/"
+  title="Physarum slime mold simulator"
+  loading="lazy"
+  allow="fullscreen; clipboard-write"
+  style="width: 100%; min-height: 80vh; border: 1px solid var(--bg-line); border-radius: 12px; background: #000; display: block;"
+></iframe>
+
+## tech & how it works
+
+No frameworks, no build step, no dependencies — just vanilla JavaScript
+and an HTML5 Canvas.
+
+- **Agent-based simulation:** each of the 60,000 agents senses the trail
+  map ahead of it, steers toward the strongest scent, moves, and deposits
+  a little trail of its own. The network is an emergent side effect of all
+  of them doing that at once.
+- **Trail map:** a single shared buffer that diffuses and decays every
+  frame, so old paths fade and new ones reinforce — the feedback loop that
+  makes the structure alive.
+- **Zero dependencies, ~60fps with 60k agents** — everything runs in flat
+  typed arrays with no per-frame allocation, so it stays smooth on a normal
+  laptop.
+
+## try it
+
+The embed above is the full app. If you'd rather have the whole window:
+
+[→ open the standalone version](/physarum/)

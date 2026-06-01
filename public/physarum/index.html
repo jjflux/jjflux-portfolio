@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Physarum — Slime Mold Simulator</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- The visible canvas; the simulation is computed at sim-resolution off-screen
+     and scaled onto this one each frame. -->
+<canvas id="view"></canvas>
+
+<!-- Collapsible control panel overlaid on the canvas -->
+<aside id="panel" class="panel">
+  <header class="panel-head">
+    <h1>Physarum</h1>
+    <button id="collapse" class="icon-btn" title="Collapse / expand panel">▾</button>
+  </header>
+
+  <div id="panel-body" class="panel-body">
+
+    <!-- Behavior presets: each sets ALL parameters at once -->
+    <section>
+      <div class="section-title">Presets</div>
+      <div class="btn-grid">
+        <button class="preset" data-preset="Veins">Veins</button>
+        <button class="preset" data-preset="Web">Web</button>
+        <button class="preset" data-preset="Coral">Coral</button>
+        <button class="preset" data-preset="Galaxy">Galaxy</button>
+      </div>
+    </section>
+
+    <!-- Live parameter sliders -->
+    <section>
+      <div class="section-title">Parameters</div>
+
+      <label class="slider">
+        <span class="slabel">Agents <span class="val" id="agentCount-val"></span></span>
+        <input type="range" id="agentCount" min="1000" max="200000" step="1000">
+      </label>
+
+      <label class="slider">
+        <span class="slabel">Sim speed (steps/frame) <span class="val" id="stepsPerFrame-val"></span></span>
+        <input type="range" id="stepsPerFrame" min="1" max="6" step="1">
+      </label>
+
+      <label class="slider">
+        <span class="slabel">Move speed <span class="val" id="moveSpeed-val"></span></span>
+        <input type="range" id="moveSpeed" min="0.1" max="3" step="0.05">
+      </label>
+
+      <label class="slider">
+        <span class="slabel">Turn speed <span class="val" id="turnSpeed-val"></span></span>
+        <input type="range" id="turnSpeed" min="0.02" max="1.4" step="0.01">
+      </label>
+
+      <label class="slider">
+        <span class="slabel">Sensor distance <span class="val" id="sensorDistance-val"></span></span>
+        <input type="range" id="sensorDistance" min="1" max="40" step="0.5">
+      </label>
+
+      <label class="slider">
+        <span class="slabel">Sensor angle <span class="val" id="sensorAngle-val"></span></span>
+        <input type="range" id="sensorAngle" min="0.05" max="1.4" step="0.01">
+      </label>
+
+      <label class="slider">
+        <span class="slabel">Trail decay <span class="val" id="decayFactor-val"></span></span>
+        <input type="range" id="decayFactor" min="0.80" max="0.995" step="0.001">
+      </label>
+
+      <label class="slider">
+        <span class="slabel">Deposit amount <span class="val" id="depositAmount-val"></span></span>
+        <input type="range" id="depositAmount" min="0.5" max="12" step="0.1">
+      </label>
+    </section>
+
+    <!-- Selectors -->
+    <section>
+      <div class="section-title">Look</div>
+      <label class="row"><span>Palette</span>
+        <select id="palette">
+          <option value="Ember">Ember</option>
+          <option value="Bioluminescent">Bioluminescent</option>
+          <option value="Mono">Mono</option>
+          <option value="Ultraviolet">Ultraviolet</option>
+        </select>
+      </label>
+      <label class="row"><span>Start pattern</span>
+        <select id="startPattern">
+          <option value="scatter">Random scatter</option>
+          <option value="ring">Centered ring</option>
+          <option value="disk">Centered disk</option>
+        </select>
+      </label>
+      <label class="row"><span>Bloom</span>
+        <input type="checkbox" id="bloomOn" class="toggle">
+      </label>
+      <label class="slider">
+        <span class="slabel">Bloom intensity <span class="val" id="bloomIntensity-val"></span></span>
+        <input type="range" id="bloomIntensity" min="0" max="1.5" step="0.01">
+      </label>
+      <label class="row"><span>Sim resolution</span>
+        <select id="resolution">
+          <option value="1000x600">1000 × 600 (high)</option>
+          <option value="800x480">800 × 480 (medium)</option>
+          <option value="600x360">600 × 360 (fast)</option>
+        </select>
+      </label>
+    </section>
+
+    <!-- Mouse painting -->
+    <section>
+      <div class="section-title">Paint</div>
+      <label class="row"><span>Brush</span>
+        <select id="brushMode">
+          <option value="off">Off</option>
+          <option value="attract">Attract (food)</option>
+          <option value="repel">Repel</option>
+        </select>
+      </label>
+      <label class="slider">
+        <span class="slabel">Brush size <span class="val" id="brushSize-val"></span></span>
+        <input type="range" id="brushSize" min="6" max="120" step="1">
+      </label>
+      <button id="clearPaint" class="wide">Clear paint</button>
+      <p class="hint">Click-drag on the canvas. Attract paints lasting food; repel fades over time.</p>
+    </section>
+
+    <!-- Actions -->
+    <section>
+      <div class="section-title">Controls</div>
+      <div class="btn-grid">
+        <button id="playPause">Pause</button>
+        <button id="reset">Reset</button>
+        <button id="randomize">Randomize</button>
+        <button id="save">Save PNG</button>
+      </div>
+    </section>
+
+    <!-- Seed / reproducibility -->
+    <section>
+      <div class="section-title">Seed</div>
+      <div class="row">
+        <input type="text" id="seed" inputmode="numeric" spellcheck="false">
+        <button id="applySeed">Apply</button>
+      </div>
+      <button id="share" class="wide">Copy share link</button>
+      <p class="hint">A typed seed reproduces an entire randomized look. Share link encodes the exact parameters.</p>
+    </section>
+
+    <div class="fps">FPS: <span id="fps">—</span></div>
+  </div>
+</aside>
+
+<script src="main.js"></script>
+</body>
+</html>

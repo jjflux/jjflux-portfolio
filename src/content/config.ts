@@ -19,7 +19,14 @@ const projects = defineCollection({
     coverImage: z.string().optional().describe("Path under /public, e.g. /projects/my-app/cover.png"),
     links: z
       .object({
-        live: z.string().url().optional(),
+        // Accept a full URL (https://…) OR a root-relative path (e.g. /physarum/)
+        // so locally-hosted apps in /public can be linked as the live demo.
+        live: z
+          .string()
+          .refine((s) => /^https?:\/\//.test(s) || s.startsWith("/"), {
+            message: "live must be a full URL or a root-relative path starting with /",
+          })
+          .optional(),
         appStore: z.string().url().optional(),
         playStore: z.string().url().optional(),
         github: z.string().url().optional(),

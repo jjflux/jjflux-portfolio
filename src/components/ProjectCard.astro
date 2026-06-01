@@ -16,7 +16,11 @@ const statusLabel = {
 }[data.status];
 ---
 
-<a class="card project-card" href={`/projects/${slug}`}>
+<a class={`card project-card${data.coverImage ? " has-cover" : ""}`} href={`/projects/${slug}`}>
+  {data.coverImage && (
+    <img class="cover-thumb" src={data.coverImage} alt={`${data.title} thumbnail`} loading="lazy" />
+  )}
+
   <div class="meta mono">
     <span class={`status status-${data.status}`}>
       <span class="dot" aria-hidden="true"></span>
@@ -46,6 +50,21 @@ const statusLabel = {
     border-bottom: 0;
   }
   .project-card:hover { color: var(--ink); }
+
+  /* Cover thumbnail: only present when coverImage is set. Clip its square top
+     corners to the card's rounded ones, and pull it flush to the card edges
+     (cancelling the card's padding) so it spans the full width at the top. */
+  .project-card.has-cover {
+    overflow: hidden;
+  }
+  .cover-thumb {
+    display: block;
+    width: calc(100% + 2 * var(--space-6));
+    height: 160px;
+    object-fit: cover;
+    margin: calc(-1 * var(--space-6)) calc(-1 * var(--space-6)) 0;
+    border-bottom: 1px solid var(--bg-line);
+  }
 
   .meta {
     display: flex;
