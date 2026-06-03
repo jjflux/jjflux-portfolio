@@ -18,7 +18,13 @@ const statusLabel = {
 
 <a class={`card project-card${data.coverImage ? " has-cover" : ""}`} href={`/projects/${slug}`}>
   {data.coverImage && (
-    <img class="cover-thumb" src={data.coverImage} alt={`${data.title} thumbnail`} loading="lazy" />
+    <img
+      class="cover-thumb"
+      src={data.coverImage}
+      alt={`${data.title} thumbnail`}
+      loading="lazy"
+      onerror="this.closest('.project-card')?.classList.remove('has-cover'); this.remove();"
+    />
   )}
 
   <div class="meta mono">
