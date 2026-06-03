@@ -1,0 +1,80 @@
+---
+title: "Orbit"
+summary: "Dodge. Collect. Climb the leaderboard."
+status: "live"
+year: 2026
+role: "Solo builder"
+tech:
+  - "Next.js"
+  - "TypeScript"
+  - "Supabase"
+  - "Postgres"
+  - "Tailwind"
+  - "Vercel"
+coverImage: "/projects/orbit/cover.png"
+links:
+  live: "https://orbit-tau-plum.vercel.app"
+  github: "https://github.com/jjflux/orbit"
+featured: true
+order: 1
+draft: false
+---
+
+## the game
+
+Orbit is a fast, juicy canvas arcade game. You steer a glowing dot,
+dodge hazards, grab orbs, push your streak. One life. Difficulty ramps.
+You die a lot. That's it.
+
+You can play it right now without an account. But if you sign up, your
+scores hit a global leaderboard and you get a personal stats page.
+
+## why i built this
+
+Most of my portfolio is visual, generative work — fun to look at, but
+light on backend. I built Orbit as a deliberate forcing function: a
+small, genuinely fun product that can't exist without the full
+production stack. Real user accounts. A Postgres database. A global
+leaderboard. Server-side anti-cheat. A live deployment. The same
+foundation client software runs on.
+
+The game is the hook. The engineering underneath is the real
+deliverable.
+
+## what's under the hood
+
+- Real auth: signup, login, password reset, per-user profiles
+- Global leaderboard: all-time + weekly (Monday 00:00 UTC reset). Your
+  own rank is pinned even when you're outside the top 100
+- Server-side score validation. Scores only submit through an
+  authenticated, rate-limited API route that validates the payload and
+  rejects impossible values. The client can never write to the database
+  directly
+- Row Level Security enforced at the database level — defense in depth
+- Logged-in dashboard, personal stats page with a score-over-time chart
+  (Recharts), editable display name, free cosmetic skins/trails
+- Public, live deploy on Vercel — push-to-main, secrets in env vars
+
+## tech & tradeoffs
+
+- **Frontend:** Next.js (App Router, TypeScript), Tailwind, HTML5
+  Canvas + Web Audio
+- **Backend:** Supabase (auth + Postgres + RLS), authenticated server
+  routes
+- **Charts:** Recharts
+- **Hosting:** Vercel
+- **Scoped out (intentionally):** recurring Stripe subscriptions. The
+  stack is built to bolt them on cleanly later — I just didn't want a
+  paywall on v1
+
+## what it demonstrates
+
+A reusable, battle-tested production SaaS skeleton: auth, a secured
+database, a trusted server API, and a live deploy pipeline. The same
+shape every real product I build sits on top of.
+
+## play it
+
+[→ play orbit](https://orbit-tau-plum.vercel.app)
+
+[source on github](https://github.com/jjflux/orbit)
