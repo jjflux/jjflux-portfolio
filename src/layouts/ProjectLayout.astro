@@ -56,7 +56,11 @@ const statusLabel = {
 
     {data.coverImage && (
       <figure class="cover">
-        <img src={data.coverImage} alt={`${data.title} cover`} />
+        <img
+          src={data.coverImage}
+          alt={`${data.title} cover`}
+          onerror="this.closest('.cover')?.remove(); this.remove();"
+        />
       </figure>
     )}
 
